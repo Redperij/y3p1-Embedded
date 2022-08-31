@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "sys_config.h": "c",
+        "lpc_types.h": "c",
+        "cmsis.h": "c"
+    }
+}

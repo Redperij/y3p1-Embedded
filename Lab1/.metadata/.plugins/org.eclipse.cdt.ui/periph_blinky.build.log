@@ -1,0 +1,6 @@
+19:24:53 **** Incremental Build of configuration Debug for project periph_blinky ****
+make -r -j12 all 
+make: Nothing to be done for 'all'.
+
+19:24:53 Build Finished. 0 errors, 0 warnings. (took 82ms)
+

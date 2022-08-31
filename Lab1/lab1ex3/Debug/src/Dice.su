@@ -1,0 +1,4 @@
+Dice.cpp:10:1:Dice::Dice()	40	static
+Dice.cpp:27:1:Dice::~Dice()	24	static
+Dice.cpp:27:1:virtual Dice::~Dice()	16	static
+Dice.cpp:31:6:void Dice::Show(int)	24	static

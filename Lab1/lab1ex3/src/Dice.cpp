@@ -1,0 +1,89 @@
+/*
+ * Dice.cpp
+ *
+ *  Created on: 31 Aug 2022
+ *      Author: Daniil Marinec
+ */
+
+#include "Dice.h"
+
+Dice::Dice() {
+/*	pd[0] = DigitalIoPin(1, 9, false, true, false);
+	pd[1] = DigitalIoPin(0, 29, false, true, false);
+	pd[2] = DigitalIoPin(0, 9, false, true, false);
+	pd[3] = DigitalIoPin(0, 10, false, true, false);
+	pd[4] = DigitalIoPin(0, 16, false, true, false);
+	pd[5] = DigitalIoPin(1, 3, false, true, false);
+	pd[6] = DigitalIoPin(0, 0, false, true, false);*/
+	for(int i = 0; i < 7; ++i) {
+		this->pd[i].write(0);
+	}
+}
+
+/*
+DigitalIoPin(1, 9, false, true, false), DigitalIoPin(0, 29, false, true, false), DigitalIoPin(0, 9, false, true, false), DigitalIoPin(0, 10, false, true, false), DigitalIoPin(0, 16, false, true, false), DigitalIoPin(1, 3, false, true, false), DigitalIoPin(0, 0, false, true, false);
+*/
+
+Dice::~Dice() {
+	// TODO Auto-generated destructor stub
+}
+
+void Dice::Show(int number) {
+	if(number < 0) number = 0;
+	switch (number)
+	{
+	case 0:
+		for(int i = 0; i < 7; ++i) {
+		this->pd[i].write(0);
+		}
+		break;
+	case 1:
+		this->pd[3].write(1); //PD4
+		break;
+	case 2:
+		this->pd[6].write(1); //PD7
+		this->pd[2].write(1); //PD3
+		break;
+	case 3:
+		this->pd[6].write(1); //PD7
+		this->pd[3].write(1); //PD4
+		this->pd[2].write(1); //PD3
+		break;
+	case 4:
+		this->pd[6].write(1); //PD7
+		this->pd[0].write(1); //PD1
+		this->pd[4].write(1); //PD5
+		this->pd[2].write(1); //PD3
+		break;
+	case 5:
+		this->pd[6].write(1); //PD7
+		this->pd[0].write(1); //PD1
+		this->pd[4].write(1); //PD5
+		this->pd[2].write(1); //PD3
+		this->pd[3].write(1); //PD4
+		break;
+	case 6:
+		this->pd[4].write(1); //PD5
+		this->pd[5].write(1); //PD6
+		this->pd[6].write(1); //PD7
+		this->pd[0].write(1); //PD1
+		this->pd[1].write(1); //PD2
+		this->pd[2].write(1); //PD3
+		break;
+	default:
+		for(int i = 0; i < 7; ++i) {
+		this->pd[i].write(1);
+		}
+		break;
+	}
+}
+/*
+0< - PD1-7 off
+1  - PD4
+2  - PD7 PD3
+3  - PD7 PD4 PD3
+4  - PD7 PD1 PD5 PD3
+5  - PD7 PD1 PD5 PD3 PD4
+6  - PD5 PD6 PD7 PD1 PD2 PD3
+7> - PD1-7 on
+*/
