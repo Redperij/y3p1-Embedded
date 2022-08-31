@@ -52,7 +52,6 @@ int main(void) {
             d.Show(7);
             while(pc0.read());
             d.Show(0);
-            counter = 0;
         }
         if(pc1.read()) {
             d.Show(0);

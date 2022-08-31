@@ -3766,3 +3766,335 @@ make: Nothing to be done for 'all'.
 23:25:00 **** Incremental Build of configuration Debug for project lab1ex3 ****
 make -r -j12 all 
 make: Nothing to be done for 'all'.
+23:55:53 **** Incremental Build of configuration Debug for project lpc_board_nxp_lpcxpresso_1549 ****
+make -r all 
+make: Nothing to be done for 'all'.
+23:55:54 **** Incremental Build of configuration Debug for project lpc_chip_15xx ****
+make -r all 
+make: Nothing to be done for 'all'.
+23:55:54 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+Building file: ../src/Dice.cpp
+Building file: ../src/lab1ex3.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -DDEBUG -D__CODE_RED -D__NEWLIB__ -DCORE_M3 -D__USE_LPCOPEN -DCPP_USE_HEAP -D__LPC15XX__ -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_board_nxp_lpcxpresso_1549\inc" -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_chip_15xx\inc" -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../src/"=. -mcpu=cortex-m3 -mthumb -fstack-usage -MMD -MP -MF"src/lab1ex3.d" -MT"src/lab1ex3.o" -MT"src/lab1ex3.d" -o "src/lab1ex3.o" "../src/lab1ex3.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -DDEBUG -D__CODE_RED -D__NEWLIB__ -DCORE_M3 -D__USE_LPCOPEN -DCPP_USE_HEAP -D__LPC15XX__ -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_board_nxp_lpcxpresso_1549\inc" -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_chip_15xx\inc" -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../src/"=. -mcpu=cortex-m3 -mthumb -fstack-usage -MMD -MP -MF"src/Dice.d" -MT"src/Dice.o" -MT"src/Dice.d" -o "src/Dice.o" "../src/Dice.cpp"
+In file included from ../src/lab1ex3.cpp:21:
+../src/Dice.h:21:19: error: expected identifier before numeric constant
+   21 |  DigitalIoPin pd1(1, 9, false, true, false);
+      |                   ^
+../src/Dice.h:21:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:22:19: error: expected identifier before numeric constant
+   22 |  DigitalIoPin pd2(0, 29, false, true, false);
+      |                   ^
+../src/Dice.h:22:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:23:19: error: expected identifier before numeric constant
+   23 |  DigitalIoPin pd3(0, 9, false, true, false);
+      |                   ^
+../src/Dice.h:23:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:24:19: error: expected identifier before numeric constant
+   24 |  DigitalIoPin pd4(0, 10, false, true, false);
+      |                   ^
+../src/Dice.h:24:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:25:19: error: expected identifier before numeric constant
+   25 |  DigitalIoPin pd5(0, 16, false, true, false);
+      |                   ^
+In file included from ../src/Dice.cpp:8:
+../src/Dice.h:21:19: error: expected identifier before numeric constant
+   21 |  DigitalIoPin pd1(1, 9, false, true, false);
+      |                   ^
+../src/Dice.h:25:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:21:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:26:19: error: expected identifier before numeric constant
+   26 |  DigitalIoPin pd6(1, 3, false, true, false);
+      |                   ^
+../src/Dice.h:26:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:22:19: error: expected identifier before numeric constant
+   22 |  DigitalIoPin pd2(0, 29, false, true, false);
+      |                   ^
+../src/Dice.h:22:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:27:19: error: expected identifier before numeric constant
+   27 |  DigitalIoPin pd7(0, 0, false, true, false);
+      |                   ^
+../src/Dice.h:27:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:23:19: error: expected identifier before numeric constant
+   23 |  DigitalIoPin pd3(0, 9, false, true, false);
+      |                   ^
+../src/Dice.h:23:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:24:19: error: expected identifier before numeric constant
+   24 |  DigitalIoPin pd4(0, 10, false, true, false);
+      |                   ^
+../src/Dice.h:24:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:25:19: error: expected identifier before numeric constant
+   25 |  DigitalIoPin pd5(0, 16, false, true, false);
+      |                   ^
+../src/Dice.h:25:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:26:19: error: expected identifier before numeric constant
+   26 |  DigitalIoPin pd6(1, 3, false, true, false);
+      |                   ^
+../src/Dice.h:26:19: error: expected ',' or '...' before numeric constant
+../src/Dice.h:27:19: error: expected identifier before numeric constant
+   27 |  DigitalIoPin pd7(0, 0, false, true, false);
+      |                   ^
+../src/Dice.h:27:19: error: expected ',' or '...' before numeric constant
+../src/Dice.cpp: In constructor 'Dice::Dice()':
+../src/Dice.cpp:21:8: error: invalid use of member function 'DigitalIoPin Dice::pd1(int)' (did you forget the '()' ?)
+   21 |  this->pd1.write(0);
+      |  ~~~~~~^~~
+../src/Dice.cpp:22:8: error: invalid use of member function 'DigitalIoPin Dice::pd2(int)' (did you forget the '()' ?)
+   22 |  this->pd2.write(0);
+      |  ~~~~~~^~~
+../src/Dice.cpp:23:8: error: invalid use of member function 'DigitalIoPin Dice::pd3(int)' (did you forget the '()' ?)
+   23 |  this->pd3.write(0);
+      |  ~~~~~~^~~
+../src/Dice.cpp:24:8: error: invalid use of member function 'DigitalIoPin Dice::pd4(int)' (did you forget the '()' ?)
+   24 |  this->pd4.write(0);
+      |  ~~~~~~^~~
+../src/Dice.cpp:25:8: error: invalid use of member function 'DigitalIoPin Dice::pd5(int)' (did you forget the '()' ?)
+   25 |  this->pd5.write(0);
+      |  ~~~~~~^~~
+make: *** [src/subdir.mk:42: src/lab1ex3.o] Error 1
+make: *** Waiting for unfinished jobs....
+../src/Dice.cpp:26:8: error: invalid use of member function 'DigitalIoPin Dice::pd6(int)' (did you forget the '()' ?)
+   26 |  this->pd6.write(0);
+      |  ~~~~~~^~~
+../src/Dice.cpp:27:8: error: invalid use of member function 'DigitalIoPin Dice::pd7(int)' (did you forget the '()' ?)
+   27 |  this->pd7.write(0);
+      |  ~~~~~~^~~
+../src/Dice.cpp: In member function 'void Dice::Show(int)':
+../src/Dice.cpp:46:9: error: invalid use of member function 'DigitalIoPin Dice::pd1(int)' (did you forget the '()' ?)
+   46 |   this->pd1.write(0);
+      |   ~~~~~~^~~
+../src/Dice.cpp:47:9: error: invalid use of member function 'DigitalIoPin Dice::pd2(int)' (did you forget the '()' ?)
+   47 |   this->pd2.write(0);
+      |   ~~~~~~^~~
+../src/Dice.cpp:48:9: error: invalid use of member function 'DigitalIoPin Dice::pd3(int)' (did you forget the '()' ?)
+   48 |   this->pd3.write(0);
+      |   ~~~~~~^~~
+../src/Dice.cpp:49:9: error: invalid use of member function 'DigitalIoPin Dice::pd4(int)' (did you forget the '()' ?)
+   49 |   this->pd4.write(0);
+      |   ~~~~~~^~~
+../src/Dice.cpp:50:9: error: invalid use of member function 'DigitalIoPin Dice::pd5(int)' (did you forget the '()' ?)
+   50 |   this->pd5.write(0);
+      |   ~~~~~~^~~
+../src/Dice.cpp:51:9: error: invalid use of member function 'DigitalIoPin Dice::pd6(int)' (did you forget the '()' ?)
+   51 |   this->pd6.write(0);
+      |   ~~~~~~^~~
+../src/Dice.cpp:52:9: error: invalid use of member function 'DigitalIoPin Dice::pd7(int)' (did you forget the '()' ?)
+   52 |   this->pd7.write(0);
+      |   ~~~~~~^~~
+../src/Dice.cpp:56:9: error: invalid use of member function 'DigitalIoPin Dice::pd4(int)' (did you forget the '()' ?)
+   56 |   this->pd4.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:61:9: error: invalid use of member function 'DigitalIoPin Dice::pd7(int)' (did you forget the '()' ?)
+   61 |   this->pd7.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:62:9: error: invalid use of member function 'DigitalIoPin Dice::pd3(int)' (did you forget the '()' ?)
+   62 |   this->pd3.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:68:9: error: invalid use of member function 'DigitalIoPin Dice::pd7(int)' (did you forget the '()' ?)
+   68 |   this->pd7.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:69:9: error: invalid use of member function 'DigitalIoPin Dice::pd4(int)' (did you forget the '()' ?)
+   69 |   this->pd4.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:70:9: error: invalid use of member function 'DigitalIoPin Dice::pd3(int)' (did you forget the '()' ?)
+   70 |   this->pd3.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:77:9: error: invalid use of member function 'DigitalIoPin Dice::pd7(int)' (did you forget the '()' ?)
+   77 |   this->pd7.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:78:9: error: invalid use of member function 'DigitalIoPin Dice::pd1(int)' (did you forget the '()' ?)
+   78 |   this->pd1.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:79:9: error: invalid use of member function 'DigitalIoPin Dice::pd5(int)' (did you forget the '()' ?)
+   79 |   this->pd5.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:80:9: error: invalid use of member function 'DigitalIoPin Dice::pd3(int)' (did you forget the '()' ?)
+   80 |   this->pd3.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:88:9: error: invalid use of member function 'DigitalIoPin Dice::pd7(int)' (did you forget the '()' ?)
+   88 |   this->pd7.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:89:9: error: invalid use of member function 'DigitalIoPin Dice::pd1(int)' (did you forget the '()' ?)
+   89 |   this->pd1.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:90:9: error: invalid use of member function 'DigitalIoPin Dice::pd5(int)' (did you forget the '()' ?)
+   90 |   this->pd5.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:91:9: error: invalid use of member function 'DigitalIoPin Dice::pd3(int)' (did you forget the '()' ?)
+   91 |   this->pd3.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:92:9: error: invalid use of member function 'DigitalIoPin Dice::pd4(int)' (did you forget the '()' ?)
+   92 |   this->pd4.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:101:9: error: invalid use of member function 'DigitalIoPin Dice::pd5(int)' (did you forget the '()' ?)
+  101 |   this->pd5.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:102:9: error: invalid use of member function 'DigitalIoPin Dice::pd6(int)' (did you forget the '()' ?)
+  102 |   this->pd6.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:103:9: error: invalid use of member function 'DigitalIoPin Dice::pd7(int)' (did you forget the '()' ?)
+  103 |   this->pd7.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:104:9: error: invalid use of member function 'DigitalIoPin Dice::pd1(int)' (did you forget the '()' ?)
+  104 |   this->pd1.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:105:9: error: invalid use of member function 'DigitalIoPin Dice::pd2(int)' (did you forget the '()' ?)
+  105 |   this->pd2.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:106:9: error: invalid use of member function 'DigitalIoPin Dice::pd3(int)' (did you forget the '()' ?)
+  106 |   this->pd3.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:112:9: error: invalid use of member function 'DigitalIoPin Dice::pd1(int)' (did you forget the '()' ?)
+  112 |   this->pd1.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:113:9: error: invalid use of member function 'DigitalIoPin Dice::pd2(int)' (did you forget the '()' ?)
+  113 |   this->pd2.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:114:9: error: invalid use of member function 'DigitalIoPin Dice::pd3(int)' (did you forget the '()' ?)
+  114 |   this->pd3.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:115:9: error: invalid use of member function 'DigitalIoPin Dice::pd4(int)' (did you forget the '()' ?)
+  115 |   this->pd4.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:116:9: error: invalid use of member function 'DigitalIoPin Dice::pd5(int)' (did you forget the '()' ?)
+  116 |   this->pd5.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:117:9: error: invalid use of member function 'DigitalIoPin Dice::pd6(int)' (did you forget the '()' ?)
+  117 |   this->pd6.write(1);
+      |   ~~~~~~^~~
+../src/Dice.cpp:118:9: error: invalid use of member function 'DigitalIoPin Dice::pd7(int)' (did you forget the '()' ?)
+  118 |   this->pd7.write(1);
+      |   ~~~~~~^~~
+make: *** [src/subdir.mk:42: src/Dice.o] Error 1
+"make -r -j12 all" terminated with exit code 2. Build might be incomplete.
+00:15:28 **** Incremental Build of configuration Debug for project lpc_board_nxp_lpcxpresso_1549 ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:15:28 **** Incremental Build of configuration Debug for project lpc_chip_15xx ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:15:29 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+Building file: ../src/Dice.cpp
+Building file: ../src/lab1ex3.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -DDEBUG -D__CODE_RED -D__NEWLIB__ -DCORE_M3 -D__USE_LPCOPEN -DCPP_USE_HEAP -D__LPC15XX__ -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_board_nxp_lpcxpresso_1549\inc" -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_chip_15xx\inc" -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../src/"=. -mcpu=cortex-m3 -mthumb -fstack-usage -MMD -MP -MF"src/Dice.d" -MT"src/Dice.o" -MT"src/Dice.d" -o "src/Dice.o" "../src/Dice.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -DDEBUG -D__CODE_RED -D__NEWLIB__ -DCORE_M3 -D__USE_LPCOPEN -DCPP_USE_HEAP -D__LPC15XX__ -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_board_nxp_lpcxpresso_1549\inc" -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_chip_15xx\inc" -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../src/"=. -mcpu=cortex-m3 -mthumb -fstack-usage -MMD -MP -MF"src/lab1ex3.d" -MT"src/lab1ex3.o" -MT"src/lab1ex3.d" -o "src/lab1ex3.o" "../src/lab1ex3.cpp"
+Finished building: ../src/lab1ex3.cpp
+Finished building: ../src/Dice.cpp
+ 
+ 
+Building target: lab1ex3.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_board_nxp_lpcxpresso_1549\Debug" -L"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_chip_15xx\Debug" -Xlinker -Map="lab1ex3.map" -Xlinker --cref -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m3 -mthumb -T "lab1ex3_Debug.ld" -o "lab1ex3.axf"  ./src/Dice.o ./src/DigitalIoPin.o ./src/cr_cpp_config.o ./src/cr_startup_lpc15xx.o ./src/crp.o ./src/lab1ex3.o ./src/sysinit.o   -llpc_board_nxp_lpcxpresso_1549 -llpc_chip_15xx
+Memory region         Used Size  Region Size  %age Used
+       MFlash256:        9620 B       256 KB      3.67%
+      Ram0_16_32:        2236 B        32 KB      6.82%
+          Ram2_4:          0 GB         4 KB      0.00%
+Finished building target: lab1ex3.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "lab1ex3.axf"; # arm-none-eabi-objcopy -v -O binary "lab1ex3.axf" "lab1ex3.bin" ; # checksum -p LPC1549 -d "lab1ex3.bin";
+   text	   data	    bss	    dec	    hex	filename
+   7508	   2112	    124	   9744	   2610	lab1ex3.axf
+ 
+00:20:25 **** Incremental Build of configuration Debug for project lpc_board_nxp_lpcxpresso_1549 ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:20:25 **** Incremental Build of configuration Debug for project lpc_chip_15xx ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:20:25 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+make: Nothing to be done for 'all'.
+00:20:26 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+make: Nothing to be done for 'all'.
+00:25:45 **** Incremental Build of configuration Debug for project lpc_board_nxp_lpcxpresso_1549 ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:25:45 **** Incremental Build of configuration Debug for project lpc_chip_15xx ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:25:45 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+Building file: ../src/lab1ex3.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -DDEBUG -D__CODE_RED -D__NEWLIB__ -DCORE_M3 -D__USE_LPCOPEN -DCPP_USE_HEAP -D__LPC15XX__ -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_board_nxp_lpcxpresso_1549\inc" -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_chip_15xx\inc" -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../src/"=. -mcpu=cortex-m3 -mthumb -fstack-usage -MMD -MP -MF"src/lab1ex3.d" -MT"src/lab1ex3.o" -MT"src/lab1ex3.d" -o "src/lab1ex3.o" "../src/lab1ex3.cpp"
+Finished building: ../src/lab1ex3.cpp
+ 
+Building target: lab1ex3.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_board_nxp_lpcxpresso_1549\Debug" -L"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_chip_15xx\Debug" -Xlinker -Map="lab1ex3.map" -Xlinker --cref -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m3 -mthumb -T "lab1ex3_Debug.ld" -o "lab1ex3.axf"  ./src/Dice.o ./src/DigitalIoPin.o ./src/cr_cpp_config.o ./src/cr_startup_lpc15xx.o ./src/crp.o ./src/lab1ex3.o ./src/sysinit.o   -llpc_board_nxp_lpcxpresso_1549 -llpc_chip_15xx
+Memory region         Used Size  Region Size  %age Used
+       MFlash256:        9620 B       256 KB      3.67%
+      Ram0_16_32:        2236 B        32 KB      6.82%
+          Ram2_4:          0 GB         4 KB      0.00%
+Finished building target: lab1ex3.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "lab1ex3.axf"; # arm-none-eabi-objcopy -v -O binary "lab1ex3.axf" "lab1ex3.bin" ; # checksum -p LPC1549 -d "lab1ex3.bin";
+   text	   data	    bss	    dec	    hex	filename
+   7508	   2112	    124	   9744	   2610	lab1ex3.axf
+ 
+00:25:48 **** Incremental Build of configuration Debug for project lpc_board_nxp_lpcxpresso_1549 ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:25:48 **** Incremental Build of configuration Debug for project lpc_chip_15xx ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:25:48 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+make: Nothing to be done for 'all'.
+00:25:49 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+make: Nothing to be done for 'all'.
+00:31:26 **** Incremental Build of configuration Debug for project lpc_board_nxp_lpcxpresso_1549 ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:31:26 **** Incremental Build of configuration Debug for project lpc_chip_15xx ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:31:26 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+make: Nothing to be done for 'all'.
+00:31:26 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+make: Nothing to be done for 'all'.
+00:34:52 **** Incremental Build of configuration Debug for project lpc_board_nxp_lpcxpresso_1549 ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:34:52 **** Incremental Build of configuration Debug for project lpc_chip_15xx ****
+make -r all 
+make: Nothing to be done for 'all'.
+00:34:52 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+Building file: ../src/lab1ex3.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -DDEBUG -D__CODE_RED -D__NEWLIB__ -DCORE_M3 -D__USE_LPCOPEN -DCPP_USE_HEAP -D__LPC15XX__ -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_board_nxp_lpcxpresso_1549\inc" -I"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_chip_15xx\inc" -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../src/"=. -mcpu=cortex-m3 -mthumb -fstack-usage -MMD -MP -MF"src/lab1ex3.d" -MT"src/lab1ex3.o" -MT"src/lab1ex3.d" -o "src/lab1ex3.o" "../src/lab1ex3.cpp"
+Finished building: ../src/lab1ex3.cpp
+ 
+Building target: lab1ex3.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_board_nxp_lpcxpresso_1549\Debug" -L"C:\studies\year3\period1\Embedded_Systems_programming\Labs\Lab1\lpc_chip_15xx\Debug" -Xlinker -Map="lab1ex3.map" -Xlinker --cref -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m3 -mthumb -T "lab1ex3_Debug.ld" -o "lab1ex3.axf"  ./src/Dice.o ./src/DigitalIoPin.o ./src/cr_cpp_config.o ./src/cr_startup_lpc15xx.o ./src/crp.o ./src/lab1ex3.o ./src/sysinit.o   -llpc_board_nxp_lpcxpresso_1549 -llpc_chip_15xx
+Memory region         Used Size  Region Size  %age Used
+       MFlash256:        9628 B       256 KB      3.67%
+      Ram0_16_32:        2236 B        32 KB      6.82%
+          Ram2_4:          0 GB         4 KB      0.00%
+Finished building target: lab1ex3.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "lab1ex3.axf"; # arm-none-eabi-objcopy -v -O binary "lab1ex3.axf" "lab1ex3.bin" ; # checksum -p LPC1549 -d "lab1ex3.bin";
+   text	   data	    bss	    dec	    hex	filename
+   7516	   2112	    124	   9752	   2618	lab1ex3.axf
+ 
+00:34:53 **** Incremental Build of configuration Debug for project lab1ex3 ****
+make -r -j12 all 
+make: Nothing to be done for 'all'.

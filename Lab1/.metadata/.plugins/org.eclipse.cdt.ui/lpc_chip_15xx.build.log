@@ -1,6 +1,6 @@
-23:24:59 **** Incremental Build of configuration Debug for project lpc_chip_15xx ****
+00:34:52 **** Incremental Build of configuration Debug for project lpc_chip_15xx ****
 make -r all 
 make: Nothing to be done for 'all'.
 
-23:24:59 Build Finished. 0 errors, 0 warnings. (took 82ms)
+00:34:52 Build Finished. 0 errors, 0 warnings. (took 90ms)
 
