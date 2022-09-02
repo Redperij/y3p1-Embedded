@@ -7,7 +7,7 @@
 
 #include "Dice.h"
 
-Dice::Dice() {
+Dice::Dice() : pd {{1, 9, false, true, false}, {0, 29, false, true, false}, {0, 9, false, true, false}, {0, 10, false, true, false}, {0, 16, false, true, false}, {1, 3, false, true, false}, {0, 0, false, true, false}} {
 	for(int i = 0; i < 7; ++i) {
 		this->pd[i].write(0);
 	}
