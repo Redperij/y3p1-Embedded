@@ -19,31 +19,7 @@
 #include <cr_section_macros.h>
 #include "PrintITM.h"
 #include "DigitalIoPin.h"
-#include <atomic>
-
-static volatile std::atomic_int counter;
-#ifdef __cplusplus
-extern "C" {
-#endif
-/**
-* @brief Handle interrupt from SysTick timer
-* @return Nothing
-*/
-void SysTick_Handler(void)
-{
-    if(counter > 0) counter--;
-}
-#ifdef __cplusplus
-}
-#endif
-
-void Sleep(int ms)
-{
-    counter = ms;
-    while(counter > 0) {
-        __WFI();
-    }
-}
+#include "Menu.h"
 
 int main(void) {
     //Hardware init.
@@ -58,54 +34,50 @@ int main(void) {
     Board_LED_Set(0, true);
 #endif
 #endif
-    //SysTick
-    uint32_t sysTickRate;
-	Chip_Clock_SetSysTickClockDiv(1);
-	sysTickRate = Chip_Clock_GetSysTickClockRate();
-	SysTick_Config(sysTickRate / 1000);
-
     //Init ITM wrapper
-    PrintITM console;
+    //PrintITM console;
+    Menu main_menu;
+    
     //Init buttons
     DigitalIoPin sw1(0, 17 ,true ,true, true);
     DigitalIoPin sw2(1, 11 ,true ,true, true);
     DigitalIoPin sw3(1, 9 ,true ,true, true);
-    //Integers to track button presses.
-    uint32_t sw1t = 0;
-    uint32_t sw2t = 0;
-    uint32_t sw3t = 0;
+    //Flags to track button presses.
+    bool sw1_state = false;
+    bool sw2_state = false;
+    bool sw3_state = false;
 
-    //const char str[] = "Hello! %d %d %d\n";
-    //console.print(str, 2, 505, 228);
-
-    //volatile static int i = 0 ;
+    main_menu.print();
+    volatile static int i = 0 ;
     //Main loop.
     while(1) {
-        Sleep(10);
-    	if(sw1.read()) {
-            sw1t += 10;
+        if(sw1.read()) {
+            sw1_state = true;
         }
-        else if(sw1t != 0){
-            console.print("SW1 pressed for %d ms\n", sw1t);
-            sw1t = 0;
+        else if(sw1_state){
+            main_menu.move_up();
+            main_menu.print();
+            sw1_state = false;
         }
         if(sw2.read()) {
-            sw2t += 10;
+            sw2_state = true;
         }
-        else if(sw2t != 0){
-            console.print("SW2 pressed for %d ms\n", sw2t);
-            sw2t = 0;
+        else if(sw2_state){
+            main_menu.switch_selected_led();
+            main_menu.print();
+            sw2_state = false;
         }
         if(sw3.read()) {
-            sw3t += 10;
+            sw3_state = true;
         }
-        else if(sw3t != 0){
-            console.print("SW3 pressed for %d ms\n", sw3t);
-            sw3t = 0;
-        }       
+        else if(sw3_state){
+            main_menu.move_down();
+            main_menu.print();
+            sw3_state = false;
+        }   
 
-        //i++ ;
-        //__asm volatile ("nop");
+        i++ ;
+        __asm volatile ("nop");
     }
     return 0 ;
 }

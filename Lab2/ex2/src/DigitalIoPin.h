@@ -22,6 +22,8 @@ private:
 	int port;
 	int pin;
 	bool input;
+	bool pullup;
+	bool invert;
 };
 
 #endif /* DIGITALIOPIN_H_ */

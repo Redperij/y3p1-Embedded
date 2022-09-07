@@ -7,8 +7,8 @@
 
 #include "DigitalIoPin.h"
 
-DigitalIoPin::DigitalIoPin(int port, int pin, bool input, bool pullup, bool invert) : port(port), pin(pin), input(input) {
-	if(input) {
+DigitalIoPin::DigitalIoPin(int port, int pin, bool input, bool pullup, bool invert) : port(port), pin(pin), input(input), pullup(pullup), invert(invert) {
+	if(this->input) {
 		uint32_t pin_modes = IOCON_DIGMODE_EN;
 		if(invert) pin_modes |= IOCON_INV_EN;
 		if(pullup) pin_modes |= IOCON_MODE_PULLUP;
@@ -24,13 +24,16 @@ DigitalIoPin::DigitalIoPin(int port, int pin, bool input, bool pullup, bool inve
 }
 
 DigitalIoPin::~DigitalIoPin() {
-	// TODO Auto-generated destructor stub
 }
 
 bool DigitalIoPin::read() {
-	return Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
+	if (this->input) return Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
+	else if (this->invert) return !Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
+	else return Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
 }
 
 void DigitalIoPin::write(bool value) {
-	if(!this->input) return Chip_GPIO_SetPinState(LPC_GPIO, port, pin, value);
+	if(this->input) return;
+	if(!this->invert) return Chip_GPIO_SetPinState(LPC_GPIO, port, pin, value);
+	else return Chip_GPIO_SetPinState(LPC_GPIO, port, pin, !value);
 }

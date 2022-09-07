@@ -75,9 +75,6 @@ int main(void) {
     uint32_t sw2t = 0;
     uint32_t sw3t = 0;
 
-    //const char str[] = "Hello! %d %d %d\n";
-    //console.print(str, 2, 505, 228);
-
     //volatile static int i = 0 ;
     //Main loop.
     while(1) {
