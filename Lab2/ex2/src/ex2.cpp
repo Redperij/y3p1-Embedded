@@ -34,8 +34,6 @@ int main(void) {
     Board_LED_Set(0, true);
 #endif
 #endif
-    //Init ITM wrapper
-    //PrintITM console;
     Menu main_menu;
     
     //Init buttons
