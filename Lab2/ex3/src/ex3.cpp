@@ -113,7 +113,7 @@ int main(void) {
             console.print("\n");
 
             aver /= SAMPLEC;
-            console.print("Average = %d counter cycles. Or %d microseconds.", aver, 1000);
+            console.print("Average = %d counter cycles. Or %d microseconds.", aver, aver / 72);
             finished = true;
         }
         
