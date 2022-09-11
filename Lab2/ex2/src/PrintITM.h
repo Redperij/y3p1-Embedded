@@ -18,6 +18,10 @@ public:
 	PrintITM(const PrintITM &) = delete;
 	virtual ~PrintITM();
 	int print(const char * format, ...);
+	int print(const char * format, va_list args);
+	#ifdef _STRING_
+	int print(const std::string format, ...);
+	#endif
 };
 
 #endif /* PRINTITM_H_ */
