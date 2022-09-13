@@ -18,10 +18,6 @@
 
 #include <cr_section_macros.h>
 
-// TODO: insert other include files here
-
-// TODO: insert other definitions and declarations here
-
 int main(void) {
 
 #if defined (__USE_LPCOPEN)
@@ -36,16 +32,18 @@ int main(void) {
 #endif
 #endif
 
-    // TODO: insert code here
-
-    // Force the counter to be placed into memory
-    volatile static int i = 0 ;
-    // Enter an infinite loop, just incrementing a counter
-    while(1) {
-        i++ ;
-        // "Dummy" NOP to allow source level single
-        // stepping of tight while() loop
-        __asm volatile ("nop");
+    Board_UARTPutSTR("\r\nHello, World\r\n");
+    Board_UARTPutChar('!');
+    Board_UARTPutChar('\r');
+    Board_UARTPutChar('\n');
+    int c; //EOF can't be put to char.
+    while(1) { // echo back what we receive
+        c = Board_UARTGetChar();
+        if(c != EOF) {
+            if(c == '\n') Board_UARTPutChar('\r'); // precede linefeed with carriage return
+            Board_UARTPutChar(c);
+            if(c == '\r') Board_UARTPutChar('\n'); // send line feed after carriage return
+        }
     }
-    return 0 ;
+    return 0;
 }
