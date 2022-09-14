@@ -17,32 +17,8 @@
 #endif
 
 #include <cr_section_macros.h>
-#include <ctype.h>
 #include "DigitalIoPin.h"
-#include <atomic>
-
-static volatile std::atomic_int counter;
-#ifdef __cplusplus
-extern "C" {
-#endif
-/**
-* @brief Handle interrupt from SysTick timer
-* @return Nothing
-*/
-void SysTick_Handler(void)
-{
-    if(counter > 0) counter--;
-}
-#ifdef __cplusplus
-}
-#endif
-void Sleep(int ms)
-{
-    counter = ms;
-    while(counter > 0) {
-        __WFI();
-    }
-}
+#include "MorseSender.h"
 
 int main(void) {
 
@@ -58,40 +34,53 @@ int main(void) {
 #endif
 #endif
 
-    //Board_UARTPutSTR("\r\nHello, World\r\n");
-    
-    //SysTick
-    uint32_t sysTickRate;
-	Chip_Clock_SetSysTickClockDiv(1);
-	sysTickRate = Chip_Clock_GetSysTickClockRate();
-	SysTick_Config(sysTickRate / 1000);
+    //DigitalIoPin sw1(0, 17, true, true, true);
+    DigitalIoPin a0(0, 8, false, true, false);
+    DigitalIoPin led_r(0, 25, false, true, true);
+    MorseSender ms(&a0, &led_r);
 
-    DigitalIoPin sw1(0, 17 ,true ,true, true);
-    DigitalIoPin led_r(0, 25 ,false ,true, true);
-    led_r.write(true);
+#if 0
+    //Test strings
+    ms.send("SOS\n\r");
+    ms.send("TTT\n\r");
+    ms.send("AAA\n\r");
+    ms.send("Save me from this nightmare.\n\r");
+    ms.send("You'd better     work as ; expected!\n\r");
+#endif
+
 
     int c; //EOF can't be put to char.
-    bool upper_case = true;
-    bool press_flag = false;
+    char str[81];
+    volatile static int q = 0;
+    unsigned int i = 0;
     while(1) {
-        Sleep(1);
-        // Check button and flip Upper/Lower case on release.
-        if(sw1.read()) {
-            press_flag = true;
-        }
-        else if (press_flag) {
-            upper_case = upper_case ? false : true;
-            led_r.read() ? led_r.write(false) : led_r.write(true);
-            press_flag = false;
-        }
         // Echo back what we receive
         c = Board_UARTGetChar();
         if(c != EOF) {
-            c = upper_case ? toupper(c) : tolower(c);
             if(c == '\n') Board_UARTPutChar('\r'); // precede linefeed with carriage return
             Board_UARTPutChar(c);
             if(c == '\r') Board_UARTPutChar('\n'); // send line feed after carriage return
+            if(i < 79) {
+                if (c == '\n' || c == '\r') {
+                    str[i] = '\n';
+                    str[i + 1] = '\0';
+                    ms.send(str);
+                    i = 0;
+                }
+                else {
+                    str[i] = (char) c;
+                    ++i;
+                }
+            }
+            else {
+                str[i] = (char) c;
+                str[i + 1] = '\0';
+                ms.send(str);
+                i = 0;
+            }
         }
+        q++;
+        __asm volatile ("nop");
     }
     return 0;
 }
