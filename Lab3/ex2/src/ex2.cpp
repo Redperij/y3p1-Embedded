@@ -17,10 +17,32 @@
 #endif
 
 #include <cr_section_macros.h>
+#include <ctype.h>
+#include "DigitalIoPin.h"
+#include <atomic>
 
-// TODO: insert other include files here
-
-// TODO: insert other definitions and declarations here
+static volatile std::atomic_int counter;
+#ifdef __cplusplus
+extern "C" {
+#endif
+/**
+* @brief Handle interrupt from SysTick timer
+* @return Nothing
+*/
+void SysTick_Handler(void)
+{
+    if(counter > 0) counter--;
+}
+#ifdef __cplusplus
+}
+#endif
+void Sleep(int ms)
+{
+    counter = ms;
+    while(counter > 0) {
+        __WFI();
+    }
+}
 
 int main(void) {
 
@@ -36,16 +58,40 @@ int main(void) {
 #endif
 #endif
 
-    // TODO: insert code here
+    //Board_UARTPutSTR("\r\nHello, World\r\n");
+    
+    //SysTick
+    uint32_t sysTickRate;
+	Chip_Clock_SetSysTickClockDiv(1);
+	sysTickRate = Chip_Clock_GetSysTickClockRate();
+	SysTick_Config(sysTickRate / 1000);
 
-    // Force the counter to be placed into memory
-    volatile static int i = 0 ;
-    // Enter an infinite loop, just incrementing a counter
+    DigitalIoPin sw1(0, 17 ,true ,true, true);
+    DigitalIoPin led_r(0, 25 ,false ,true, true);
+    led_r.write(true);
+
+    int c; //EOF can't be put to char.
+    bool upper_case = true;
+    bool press_flag = false;
     while(1) {
-        i++ ;
-        // "Dummy" NOP to allow source level single
-        // stepping of tight while() loop
-        __asm volatile ("nop");
+        Sleep(1);
+        // Check button and flip Upper/Lower case on release.
+        if(sw1.read()) {
+            press_flag = true;
+        }
+        else if (press_flag) {
+            upper_case = upper_case ? false : true;
+            led_r.read() ? led_r.write(false) : led_r.write(true);
+            press_flag = false;
+        }
+        // Echo back what we receive
+        c = Board_UARTGetChar();
+        if(c != EOF) {
+            c = upper_case ? toupper(c) : tolower(c);
+            if(c == '\n') Board_UARTPutChar('\r'); // precede linefeed with carriage return
+            Board_UARTPutChar(c);
+            if(c == '\r') Board_UARTPutChar('\n'); // send line feed after carriage return
+        }
     }
-    return 0 ;
+    return 0;
 }
