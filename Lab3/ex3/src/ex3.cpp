@@ -19,6 +19,8 @@
 #include <cr_section_macros.h>
 #include "DigitalIoPin.h"
 #include "MorseSender.h"
+#include "LpcUart.h"
+#include <string.h>
 
 int main(void) {
 
@@ -47,37 +49,78 @@ int main(void) {
     ms.send("Save me from this nightmare.\n\r");
     ms.send("You'd better     work as ; expected!\n\r");
 #endif
+	LpcPinMap none = {-1, -1}; // unused pin has negative values in it
+	LpcPinMap txpin = { 0, 18 }; // transmit pin that goes to debugger's UART->USB converter
+	LpcPinMap rxpin = { 0, 13 }; // receive pin that goes to debugger's UART->USB converter
+	LpcUartConfig cfg = { LPC_USART0, 115200, UART_CFG_DATALEN_8 | UART_CFG_PARITY_NONE | UART_CFG_STOPLEN_1, false, txpin, rxpin, none, none };
+	LpcUart uart(cfg);
 
-
-    int c; //EOF can't be put to char.
-    char str[81];
+    char c;
+    char buf[81] = {0};
+    char str[81] = {0};
+    bool idle = true;
     volatile static int q = 0;
     unsigned int i = 0;
     while(1) {
-        // Echo back what we receive
-        c = Board_UARTGetChar();
-        if(c != EOF) {
-            if(c == '\n') Board_UARTPutChar('\r'); // precede linefeed with carriage return
-            Board_UARTPutChar(c);
-            if(c == '\r') Board_UARTPutChar('\n'); // send line feed after carriage return
-            if(i < 79) {
-                if (c == '\n' || c == '\r') {
-                    str[i] = '\n';
-                    str[i + 1] = '\0';
-                    ms.send(str);
-                    i = 0;
+        if(uart.read(c)) {
+            // Echo back what we receive
+            if (c == '\n') uart.write('\r'); // precede linefeed with carriage return
+            uart.write(c);
+            if (c == '\r') uart.write('\n'); // send line feed after carriage return
+            
+            buf[i] = c;
+            if(i == 80) i = 0;
+            else ++i;
+
+            if (c == '\n' || c == '\r') {
+                if (i == 0) {
+                    strcpy(str, buf);
+                    str[81] = '\0';
+                }
+                else if(buf[i + 1] == 0) {
+                    strcpy(str, buf);
                 }
                 else {
-                    str[i] = (char) c;
-                    ++i;
+                    unsigned int e = 0;
+                    for(unsigned int w = i + 1; w < 81; ++w) {
+                        str[e] = buf[w];
+                        buf[w] = 0;
+                    }
+                    for(unsigned int w = 0; w <= i; ++w) {
+                        str[e] = buf[w];
+                        buf[w] = 0;
+                    }
+                    str[81] = '\0';
                 }
+                char command[81];
+                char text[81];
+                sscanf(str, "%s %s", command, text);
+                uart.write("\nLOOK!\n");
+                uart.write(command);
+                uart.write("\n---------\n");
+                uart.write(text);
             }
-            else {
-                str[i] = (char) c;
-                str[i + 1] = '\0';
-                ms.send(str);
-                i = 0;
-            }
+
+
+
+            //if(i < 79) {
+            //    if (c == '\n' || c == '\r') {
+            //        str[i] = '\n';
+            //        str[i + 1] = '\0';
+            //        ms.send(str);
+            //        i = 0;
+            //    }
+            //    else {
+            //        str[i] = (char) c;
+            //        ++i;
+            //    }
+            //}
+            //else {
+            //    str[i] = (char) c;
+            //    str[i + 1] = '\0';
+            //    ms.send(str);
+            //    i = 0;
+            //}
         }
         q++;
         __asm volatile ("nop");
