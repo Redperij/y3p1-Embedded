@@ -92,13 +92,17 @@ int main(void) {
                     }
                     str[81] = '\0';
                 }
+                i = 0;
                 char command[81];
                 char text[81];
-                sscanf(str, "%s %s", command, text);
+                sscanf(str, "%s %s", co mmand, text);
+                // Debug
+                #if 1
                 uart.write("\nLOOK!\n");
                 uart.write(command);
                 uart.write("\n---------\n");
                 uart.write(text);
+                #endif
             }
 
 
