@@ -22,6 +22,8 @@
 #include "LpcUart.h"
 #include <string.h>
 
+void empty_buffer(char *buf, unsigned int buf_len);
+
 int main(void) {
 
 #if defined (__USE_LPCOPEN)
@@ -57,52 +59,73 @@ int main(void) {
 
     char c;
     char buf[81] = {0};
-    char str[81] = {0};
     bool idle = true;
     volatile static int q = 0;
     unsigned int i = 0;
     while(1) {
         if(uart.read(c)) {
             // Echo back what we receive
-            if (c == '\n') uart.write('\r'); // precede linefeed with carriage return
+            if (c == '\n') {
+                uart.write('\r'); // precede linefeed with carriage return
+                c = '\r';
+            }
             uart.write(c);
-            if (c == '\r') uart.write('\n'); // send line feed after carriage return
+            if (c == '\r') {
+                uart.write('\n'); // send line feed after carriage return
+            }
             
             buf[i] = c;
             if(i == 80) i = 0;
             else ++i;
 
-            if (c == '\n' || c == '\r') {
+            if (c == '\r' && strlen(buf) > 1) {
+                char str[82] = {0};
                 if (i == 0) {
                     strcpy(str, buf);
-                    str[81] = '\0';
+                    empty_buffer(buf, 81);
+                    str[81] = '\n';
+                    str[82] = '\0';
                 }
                 else if(buf[i + 1] == 0) {
                     strcpy(str, buf);
+                    empty_buffer(buf, 81);
+                    unsigned int len = strlen(str);
+                    str[len] = '\n';
+                    str[len + 1] = '\0';
                 }
                 else {
                     unsigned int e = 0;
                     for(unsigned int w = i + 1; w < 81; ++w) {
                         str[e] = buf[w];
                         buf[w] = 0;
+                        ++e;
                     }
                     for(unsigned int w = 0; w <= i; ++w) {
                         str[e] = buf[w];
                         buf[w] = 0;
+                        ++e;
                     }
-                    str[81] = '\0';
+                    unsigned int len = strlen(str);
+                    str[len] = '\n';
+                    str[len + 1] = '\0';
                 }
                 i = 0;
-                char command[81];
-                char text[81];
-                sscanf(str, "%s %s", co mmand, text);
+                char command[82] = {0};
+                char text[82] = {0};
+                //sscanf(str, "%s %s", command, text);
+                sscanf(str, "%s ", command);
+                strcpy(text, str + strlen(command) + 1);
                 // Debug
                 #if 1
-                uart.write("\nLOOK!\n");
+                uart.write("\r\nLOOK!\r\n");
                 uart.write(command);
-                uart.write("\n---------\n");
+                uart.write("\r\n---------\r\n");
                 uart.write(text);
                 #endif
+            }
+            else if (buf[0] == '\r') {
+                buf[0] = '\0';
+                i = 0;
             }
 
 
@@ -130,4 +153,10 @@ int main(void) {
         __asm volatile ("nop");
     }
     return 0;
+}
+
+void empty_buffer(char *buf, unsigned int buf_len) {
+    for (unsigned i = 0; i < buf_len; ++i) {
+        buf[i] = 0;
+    }
 }
