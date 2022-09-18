@@ -22,14 +22,17 @@ public:
 	MorseSender(DigitalIoPin *opin, DigitalIoPin *led);
 	void send(const char *str) const;
 	void send(std::string str) const;
+	void set_wpm(const int wpm);
+	unsigned int get_wpm() const;
+	unsigned int get_dot_length() const;
 	virtual ~MorseSender();
 private:
 	void send_char(unsigned int ch) const;
 	DigitalIoPin *opin;
 	DigitalIoPin *led;
-	const unsigned char DOT = 1;
-	const unsigned char DASH = 3;
-	const unsigned int dot_time = 20;
+	const unsigned char DOT = 1; //times the dot_time
+	const unsigned char DASH = 3; //times the dot_time
+	unsigned int dot_time = 20; //milliseconds
 	const struct MorseCode ITU_morse[37] = {
 	{ 'A', { DOT, DASH } }, // A
 	{ 'B', { DASH, DOT, DOT, DOT } }, // B

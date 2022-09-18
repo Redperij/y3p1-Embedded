@@ -23,6 +23,7 @@
 #include <string.h>
 
 void empty_buffer(char *buf, unsigned int buf_len);
+void strtolower(char *str);
 
 int main(void) {
 
@@ -37,8 +38,7 @@ int main(void) {
     Board_LED_Set(0, true);
 #endif
 #endif
-
-    //DigitalIoPin sw1(0, 17, true, true, true);
+    //Morse init.
     DigitalIoPin a0(0, 8, false, true, false);
     DigitalIoPin led_r(0, 25, false, true, true);
     MorseSender ms(&a0, &led_r);
@@ -57,11 +57,10 @@ int main(void) {
 	LpcUartConfig cfg = { LPC_USART0, 115200, UART_CFG_DATALEN_8 | UART_CFG_PARITY_NONE | UART_CFG_STOPLEN_1, false, txpin, rxpin, none, none };
 	LpcUart uart(cfg);
 
-    char c;
-    char buf[81] = {0};
-    bool idle = true;
-    volatile static int q = 0;
-    unsigned int i = 0;
+    char c; //Character read by UART.
+    char buf[81] = {0}; //Buffer for input.
+    volatile static int q = 0; //Cycle counter.
+    unsigned int i = 0; //Buffer tracking.
     while(1) {
         if(uart.read(c)) {
             // Echo back what we receive
@@ -73,81 +72,68 @@ int main(void) {
             if (c == '\r') {
                 uart.write('\n'); // send line feed after carriage return
             }
-            
-            buf[i] = c;
-            if(i == 80) i = 0;
-            else ++i;
 
+            //Buffer is not filled yet -> write character to buffer.
+            if (i < 80 && c != '\0') {
+                buf[i] = c;
+                ++i;
+            }
+
+            //On line feed after receiving some input -> parse input.
             if (c == '\r' && strlen(buf) > 1) {
-                char str[82] = {0};
-                if (i == 0) {
-                    strcpy(str, buf);
-                    empty_buffer(buf, 81);
-                    str[81] = '\n';
-                    str[82] = '\0';
+                char str[81] = {0};
+                char command[81] = {0};
+                strcpy(str, buf);
+                
+                // Restore empty buffer state.
+                empty_buffer(buf, 81);
+                i = 0;
+                
+                //Regard received string as "[command] [value]".
+                sscanf(str, "%s ", command); //Getting command.
+                strcpy(str, str + strlen(command) + 1); //Getting value.
+                
+                #if 0 // Debug
+                uart.write("\r\n->Received:\r\n->");
+                uart.write(command);
+                uart.write("\r\n->---------\r\n->");
+                uart.write(str);
+                #endif
+
+                //Command recognition.
+                strtolower(command);
+                if (!strcmp(command, "wpm")) {
+                    //Regard str as possible number. It must be in range between 3 and 200.
+                    int wpm = 0;
+                    sscanf(str, "%d", &wpm);
+                    if (wpm > 2 && wpm < 201) ms.set_wpm(wpm);
+                    else uart.write("\r\n->Given value is invalid. Valid range is from 3 to 200.\r\n");
                 }
-                else if(buf[i + 1] == 0) {
-                    strcpy(str, buf);
-                    empty_buffer(buf, 81);
-                    unsigned int len = strlen(str);
-                    str[len] = '\n';
-                    str[len + 1] = '\0';
+                else if (!strcmp(command, "send")) {
+                    if (strlen(str) > 0) ms.send(str);
+                    else uart.write("\r\n->No text to send.\r\n");
+                }
+                else if (!strcmp(command, "set")) {
+                    char temp[6] = {0};
+                    uart.write("\r\n->Current wpm is: ");
+                    snprintf(temp, 6, "%d", ms.get_wpm());
+                    uart.write(temp);
+                    uart.write("\r\n->Current dot length is: ");
+                    snprintf(temp, 6, "%d", ms.get_dot_length());
+                    uart.write(temp);
+                    uart.write("\r\n");
                 }
                 else {
-                    unsigned int e = 0;
-                    for(unsigned int w = i + 1; w < 81; ++w) {
-                        str[e] = buf[w];
-                        buf[w] = 0;
-                        ++e;
-                    }
-                    for(unsigned int w = 0; w <= i; ++w) {
-                        str[e] = buf[w];
-                        buf[w] = 0;
-                        ++e;
-                    }
-                    unsigned int len = strlen(str);
-                    str[len] = '\n';
-                    str[len + 1] = '\0';
+                    uart.write("\r\n->Command was not recognised.\r\n->Possible commands:\r\n");
+                    uart.write("->wpm [number], send [text], set\r\n");
                 }
-                i = 0;
-                char command[82] = {0};
-                char text[82] = {0};
-                //sscanf(str, "%s %s", command, text);
-                sscanf(str, "%s ", command);
-                strcpy(text, str + strlen(command) + 1);
-                // Debug
-                #if 1
-                uart.write("\r\nLOOK!\r\n");
-                uart.write(command);
-                uart.write("\r\n---------\r\n");
-                uart.write(text);
-                #endif
             }
+            //Lone line feed -> ignore it.
             else if (buf[0] == '\r') {
+                // Restore empty buffer state.
                 buf[0] = '\0';
                 i = 0;
             }
-
-
-
-            //if(i < 79) {
-            //    if (c == '\n' || c == '\r') {
-            //        str[i] = '\n';
-            //        str[i + 1] = '\0';
-            //        ms.send(str);
-            //        i = 0;
-            //    }
-            //    else {
-            //        str[i] = (char) c;
-            //        ++i;
-            //    }
-            //}
-            //else {
-            //    str[i] = (char) c;
-            //    str[i + 1] = '\0';
-            //    ms.send(str);
-            //    i = 0;
-            //}
         }
         q++;
         __asm volatile ("nop");
@@ -158,5 +144,11 @@ int main(void) {
 void empty_buffer(char *buf, unsigned int buf_len) {
     for (unsigned i = 0; i < buf_len; ++i) {
         buf[i] = 0;
+    }
+}
+
+void strtolower(char *str) {
+    for (unsigned int i = 0; i < strlen(str); ++i) {
+        str[i] = tolower(str[i]);
     }
 }

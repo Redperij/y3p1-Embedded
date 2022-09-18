@@ -74,9 +74,40 @@ void MorseSender::send(const char *str) const {
 	}
 	Sleep(this->dot_time * 7 * this->DOT); // Wait after sending everything.
 }
-
+/**
+ * @brief Sends string via opin as a morse code.
+ * 
+ * @param str Null terminated string to send as a morse code.
+ */
 void MorseSender::send(std::string str) const {
 	send(str.c_str());
+}
+/**
+ * @brief Sets dot length according to the provided words per minute value.
+ * 
+ * @param wpm Words per minute.
+ */
+void MorseSender::set_wpm(const int wpm) {
+	//minute = 60 sec = 60000 millisec
+	//one word = 60 dot lengths
+	//'n' wpm = 'n' words in 60000 millisec meaning 60 * n dot lengths in 60000 millisec.
+	if (wpm > 2 && wpm < 201) this->dot_time = 60000 / (60 * wpm);
+}
+/**
+ * @brief Returns words per minute value.
+ * 
+ * @return unsigned int words per minute.
+ */
+unsigned int MorseSender::get_wpm() const {
+	return 60000 / (this->dot_time * 60);
+}
+/**
+ * @brief Returns dot length value.
+ * 
+ * @return unsigned int dot length.
+ */
+unsigned int MorseSender::get_dot_length() const {
+	return this->dot_time;
 }
 
 void MorseSender::send_char(unsigned int ch) const {
