@@ -34,7 +34,7 @@ int main(void) {
 #endif
 #endif
 
-    //DigitalIoPin sw1(0, 17, true, true, true);
+    //Morse init.
     DigitalIoPin a0(0, 8, false, true, false);
     DigitalIoPin led_r(0, 25, false, true, true);
     MorseSender ms(&a0, &led_r);

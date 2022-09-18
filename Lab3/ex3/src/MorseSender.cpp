@@ -72,7 +72,6 @@ void MorseSender::send(const char *str) const {
 			else send_char((unsigned int)'X');
 		}
 	}
-	Sleep(this->dot_time * 7 * this->DOT); // Wait after sending everything.
 }
 /**
  * @brief Sends string via opin as a morse code.
