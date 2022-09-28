@@ -75,6 +75,7 @@ int main(void) {
     I2CHandler i2c_temp((uint8_t)0x48);
     //Value from i2c device register.
     uint8_t read = 0x00;
+    unsigned int standby_timer = 0;
     while(1) {
         if(sw3.read()) {
             while(sw3.read());
@@ -85,7 +86,8 @@ int main(void) {
                     uart.write(msg);
                     Sleep(DELAY_BETWEEN_I2C);
                     if(i2c_temp.read(0x00, &read, 1)) {
-                        snprintf(msg, 32, "Temperature is: 0x%02x\r\n", read);
+                        //read -= 0x1e; //-30 to check negative values.
+                        snprintf(msg, 32, "Temperature is: 0x%02x = %dC\r\n", read, (int8_t)read);
                         uart.write(msg);
                     }
                     else uart.write("Unable to connect to temperature sensor.\r\n");
