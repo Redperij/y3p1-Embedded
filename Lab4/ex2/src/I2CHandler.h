@@ -26,12 +26,7 @@ private:
 	uint8_t i2c_dev_addr = 0x4d; // Awailable A0 = 0x48, A1= 0x49, A2 = 0x4a, A3 = 0x4b, A4 = 0x4c, A5 = 0x4d, A6 = 0x4e, A7 = 0x4f.
 	unsigned int i2c_bitrate = 55000; // 55000Hz = 55kHz
 	unsigned int i2c_clk_divider = 1309; // 72000kHz / 1309 ~= 55kHz
-	static bool i2c_initialised;
+	static bool i2c_initialised; //flag to check if i2c was initialised by some other instance of this class.
 };
 
-/* Standard I2C mode */
-//#define I2C_MODE    (0) //Don't care?
-
-/* SysTick rate in Hz */
-//#define TICKRATE_HZ         (10) //Don't care?
 #endif /* I2CHANDLER_H_ */

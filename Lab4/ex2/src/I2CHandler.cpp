@@ -38,6 +38,15 @@ I2CHandler::I2CHandler(uint8_t i2c_dev_addr, unsigned int i2c_bitrate, unsigned 
 
 I2CHandler::~I2CHandler() {}
 
+/**
+ * @brief Writes data to specified register.
+ * 
+ * @param reg Register to write data to. (command)
+ * @param trdata Pointer to data array to write into the register.
+ * @param size Size of an array.
+ * @return true (status returned 0, I2C transfer succeeded.)
+ * @return false (status returned non-zero, I2C transfer encountered an error.)
+ */
 bool I2CHandler::write(uint8_t reg, uint8_t *trdata, const uint16_t size) {
 	uint8_t arr[size + 1];
 	arr[0] = reg;

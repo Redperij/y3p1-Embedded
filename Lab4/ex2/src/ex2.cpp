@@ -9,6 +9,7 @@
 */
 
 #define DELAY_BETWEEN_I2C 5 //ms (note: Again, used for convinience. 5ms just to make sure that nothing goes wrong.)
+#define STANDBY_TIMEOUT 5000 //ms (Convinience)
 
 #if defined (__USE_LPCOPEN)
 #if defined(NO_BOARD_LIB)
@@ -73,30 +74,74 @@ int main(void) {
     DigitalIoPin sw3(1, 9 ,true ,true, true);
     //I2C device.
     I2CHandler i2c_temp((uint8_t)0x48);
-    //Value from i2c device register.
-    uint8_t read = 0x00;
+    
+    const uint8_t reg_control = 0x01; //Control register command.
+    const uint8_t reg_temp = 0x00; //Temperature register command.
+    const uint8_t standby_bit = 0x80; //Standby bit in control register.
+    const uint8_t ready_bit = 0x40; //Ready bit in control register.
+    uint8_t read = 0x00; //Value from i2c device register.
     unsigned int standby_timer = 0;
+    unsigned long long timestamp = 0; //Timestamp for JSON.
+    unsigned int sample = 0; //Sample number for JSON.
+    bool standby_flag = false;
     while(1) {
         if(sw3.read()) {
+            //Remove standby
+            standby_timer = 0;
+            if(standby_flag) {
+                standby_flag = false;
+                uint8_t normal_bit = 0x00;
+                if(!i2c_temp.write(reg_control, &normal_bit, 1)) uart.write("Unable to connect to temperature sensor. Standby wasn't removed.\r\n");
+                else uart.write("Stanby mode off.\r\n");
+            }
+            //Wait for button release.
             while(sw3.read());
-            if(i2c_temp.read(0x01, &read, 1)) {
-                if(read & 0x40) { // if data_ready bit is set to 1.
-                    char msg[32];
-                    snprintf(msg, 32, "Status is: 0x%02x\r\n", read);
+            //Try to read temperature.
+            if(i2c_temp.read(reg_control, &read, 1)) {
+                if((read & ready_bit) && !(read & standby_bit)) { // if data_ready bit is set to 1.
+                    char msg[128];
+#if 0
+                    //Debug prints.
+                    snprintf(msg, 128, "Status is: 0x%02x\r\n", read);
                     uart.write(msg);
+#endif
+                    //Carefully seperate i2c transfers.
                     Sleep(DELAY_BETWEEN_I2C);
-                    if(i2c_temp.read(0x00, &read, 1)) {
+                    timestamp += DELAY_BETWEEN_I2C;
+
+                    if(i2c_temp.read(reg_temp, &read, 1)) {                        
                         //read -= 0x1e; //-30 to check negative values.
-                        snprintf(msg, 32, "Temperature is: 0x%02x = %dC\r\n", read, (int8_t)read);
+#if 0
+                        //Debug prints.
+                        snprintf(msg, 128, "Temperature is: 0x%02x = %dC\r\n", read, (int8_t)read);
+                        uart.write(msg);
+#endif
+                        //JSON
+                        sample++;
+                        snprintf(msg, 128, "{\r\n\t\"samplenr\": %d,\r\n\t\"timestamp\": %llu,\r\n\t\"temperature\": %d\r\n}\r\n", sample, timestamp, (int8_t)read);
                         uart.write(msg);
                     }
                     else uart.write("Unable to connect to temperature sensor.\r\n");
+                }
+                else if(read & standby_bit) {
+                    standby_flag = true;
+                    uart.write("Standby is still set. No temperature for you!\r\n");
                 }
                 else uart.write("Data is not ready.\r\n");
             }
             else uart.write("Unable to connect to temperature sensor.\r\n");
         }
+        //Sleep between button reads.
         Sleep(DELAY_BETWEEN_I2C);
+        timestamp += DELAY_BETWEEN_I2C;
+        //Stanby timeout handling.
+        standby_timer += DELAY_BETWEEN_I2C;
+        if(!standby_flag && (standby_timer >= STANDBY_TIMEOUT)) {
+            standby_flag = true;
+            uint8_t standby = 0x80;
+            if(!i2c_temp.write(reg_control, &standby, 1)) uart.write("Unable to connect to temperature sensor. Standby wasn't set.\r\n");
+            else uart.write("Stanby mode on.\r\n");
+        }
     }
     return 0 ;
 }
