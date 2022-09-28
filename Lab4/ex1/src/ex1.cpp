@@ -8,6 +8,8 @@
 ===============================================================================
 */
 
+#define DELAY_BETWEEN_I2C 5 //ms (note: Again, used for convinience. 5ms just to make sure that nothing goes wrong.)
+
 #if defined (__USE_LPCOPEN)
 #if defined(NO_BOARD_LIB)
 #include "chip.h"
@@ -53,12 +55,8 @@ int main(void) {
     SystemCoreClockUpdate();
 #if !defined(NO_BOARD_LIB)
     Board_Init();
-    // Set the LED to the state of "On"
-    Board_LED_Set(0, true);
 #endif
 #endif
-    //Activity LED off
-    Board_LED_Set(0, false);
     //SysTick
     uint32_t sysTickRate;
 	Chip_Clock_SetSysTickClockDiv(1);
@@ -75,88 +73,28 @@ int main(void) {
     DigitalIoPin sw3(1, 9 ,true ,true, true);
     //I2C device.
     I2CHandler i2c_temp((uint8_t)0x48);
-
-    volatile static int i = 0 ;
-    unsigned int flipper = 0;
-    uint8_t transmit[2] = {1, 0};
-    uint16_t transmit_s = 1;
-    uint8_t read = 0;
-    uint16_t read_s = 1;
-    std::string str;
-    char mes[127];
+    //Value from i2c device register.
+    uint8_t read = 0x00;
     while(1) {
-        switch (flipper)
-        {
-        case 0: //Get the value of control reg, with standby.
-            transmit[0] = 0x01;
-            transmit_s = 1;
-            read = 0;
-            read_s = 1;
-            flipper = 1;
-            str = "Control reg, standby?";
-            break;
-        case 1: //Get the value of control reg, remove standby.
-            transmit[0] = 0x01;
-            transmit[1] = 0x00;
-            transmit_s = 2;
-            read = 0;
-            read_s = 1;
-            flipper = 2;
-            str = "Control reg, remove standby";
-            break;
-        case 2: //Get the value of control reg, no standby.
-            transmit[0] = 0x01;
-            transmit_s = 1;
-            read = 0;
-            read_s = 1;
-            flipper = 3;
-            str = "Control reg, no standby";
-            break;
-        case 3: //Get the value of temp reg, no standby.
-            transmit[0] = 0x00;
-            transmit_s = 1;
-            read = 0;
-            read_s = 1;
-            flipper = 4;
-            str = "Temp reg, no standby";
-            break;
-        case 4: //Get the value of control reg put standby.
-            transmit[0] = 0x01;
-            transmit[1] = 0x80;
-            transmit_s = 2;
-            read = 0;
-            read_s = 1;
-            flipper = 5;
-            str = "Control reg, set standby";
-            break;
-        case 5: //Get the value of temp reg with standby.
-            transmit[0] = 0x00;
-            transmit_s = 1;
-            read = 0;
-            read_s = 1;
-            flipper = 6;
-            str = "Temp reg, standby";
-            break;
-        case 6: //Get the value of control reg put standby.
-            transmit[0] = 0x01;
-            transmit[1] = 0x80;
-            transmit_s = 2;
-            read = 0;
-            read_s = 1;
-            flipper = 0;
-            str = "Control reg, set standby";
-            break;
-        default:
-            break;
+        if(sw3.read()) {
+            while(sw3.read());
+            if(i2c_temp.read(0x01, &read, 1)) {
+                if(read & 0x40) { // if data_ready bit is set to 1.
+                    char msg[32];
+                    snprintf(msg, 32, "Status is: 0x%02x\r\n", read);
+                    uart.write(msg);
+                    Sleep(DELAY_BETWEEN_I2C);
+                    if(i2c_temp.read(0x00, &read, 1)) {
+                        snprintf(msg, 32, "Temperature is: 0x%02x\r\n", read);
+                        uart.write(msg);
+                    }
+                    else uart.write("Unable to connect to temperature sensor.\r\n");
+                }
+                else uart.write("Data is not ready.\r\n");
+            }
+            else uart.write("Unable to connect to temperature sensor.\r\n");
         }
-        while(!sw3.read());
-        while(sw3.read());
-        i2c_temp.SetupXferRecAndExecute(transmit, transmit_s, &read, read_s);
-        snprintf(mes, 127, "%s: 0x%02x\r\n", str.c_str(), read);
-        uart.write(mes);
-        i++;
-        __asm volatile ("nop");
-
+        Sleep(DELAY_BETWEEN_I2C);
     }
     return 0 ;
 }
