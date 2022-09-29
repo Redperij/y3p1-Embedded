@@ -49,7 +49,7 @@ private:
 	bool lunch; //lunch flag
 	bool night; //night flag
 	bool cold; //cold flag
-	uint8_t cold_boundary; //Which value is considered to be cold. (*set to 26 in the constructor)
+	int8_t cold_boundary; //Which value is considered to be cold. (*set to 26 in the constructor)
 };
 
 #endif /* STATEMACHINE_H_ */
