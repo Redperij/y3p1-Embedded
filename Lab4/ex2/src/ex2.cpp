@@ -89,6 +89,10 @@ int main(void) {
             standby_timer = 0;
             if(i2c_temp.read(reg_control, &read, 1) && (read & standby_bit)) {
                 uint8_t normal_bit = 0x00;
+
+                Sleep(DELAY_BETWEEN_I2C);
+                timestamp += DELAY_BETWEEN_I2C;
+
                 if(!i2c_temp.write(reg_control, &normal_bit, 1)) uart.write("Unable to connect to temperature sensor. Standby wasn't removed.\r\n");
                 else uart.write("Stanby mode off.\r\n");
             }
@@ -135,6 +139,10 @@ int main(void) {
         standby_timer += DELAY_BETWEEN_I2C;
         if(i2c_temp.read(reg_control, &read, 1) && !(read & standby_bit) && (standby_timer >= STANDBY_TIMEOUT)) {
             uint8_t standby = 0x80;
+
+            Sleep(DELAY_BETWEEN_I2C);
+            timestamp += DELAY_BETWEEN_I2C;
+            
             if(!i2c_temp.write(reg_control, &standby, 1)) uart.write("Unable to connect to temperature sensor. Standby wasn't set.\r\n");
             else uart.write("Stanby mode on.\r\n");
         }
