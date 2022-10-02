@@ -8,7 +8,7 @@
 ===============================================================================
 */
 
-#define DELAY_BETWEEN_I2C 5 //ms (note: Again, used for convinience. 5ms just to make sure that nothing goes wrong.)
+#define DELAY_BETWEEN_I2C 10 //ms (note: Again, used for convinience. 5ms just to make sure that nothing goes wrong.)
 #define STANDBY_TIMEOUT 5000 //ms (Convinience)
 
 #if defined (__USE_LPCOPEN)
@@ -80,69 +80,42 @@ int main(void) {
     const uint8_t standby_bit = 0x80; //Standby bit in control register.
     const uint8_t ready_bit = 0x40; //Ready bit in control register.
     uint8_t read = 0x00; //Value from i2c device register.
-    unsigned int standby_timer = 0;
     unsigned long long timestamp = 0; //Timestamp for JSON.
     unsigned int sample = 0; //Sample number for JSON.
     while(1) {
-        if(sw3.read()) {
-            //Remove standby
-            standby_timer = 0;
-            if(i2c_temp.read(reg_control, &read, 1) && (read & standby_bit)) {
-                uint8_t normal_bit = 0x00;
-                if(!i2c_temp.write(reg_control, &normal_bit, 1)) uart.write("Unable to connect to temperature sensor. Standby wasn't removed.\r\n");
-                else uart.write("Stanby mode off.\r\n");
-            }
-            Sleep(DELAY_BETWEEN_I2C);
-            timestamp += DELAY_BETWEEN_I2C;
-            //Wait for button release.
-            while(sw3.read());
-            //Try to read temperature.
-            if(i2c_temp.read(reg_control, &read, 1)) {
-                if((read & ready_bit) && !(read & standby_bit)) { // if data_ready bit is set to 1.
-                    char msg[128];
-#if 0
-                    //Debug prints.
-                    snprintf(msg, 128, "Status is: 0x%02x\r\n", read);
-                    uart.write(msg);
-#endif
-                    //Carefully seperate i2c transfers.
-                    Sleep(DELAY_BETWEEN_I2C);
-                    timestamp += DELAY_BETWEEN_I2C;
-
-                    if(i2c_temp.read(reg_temp, &read, 1)) {                        
-                        //read -= 0x1e; //-30 to check negative values.
-#if 0
-                        //Debug prints.
-                        snprintf(msg, 128, "Temperature is: 0x%02x = %dC\r\n", read, (int8_t)read);
-                        uart.write(msg);
-#endif
-                        //JSON
-                        sample++;
-                        snprintf(msg, 128, "{\r\n\t\"samplenr\": %d,\r\n\t\"timestamp\": %llu,\r\n\t\"temperature\": %d\r\n}\r\n", sample, timestamp, (int8_t)read);
-                        uart.write(msg);
-                    }
-                    else uart.write("Unable to connect to temperature sensor.\r\n");
-                }
-                else if(read & standby_bit) {
-                    uart.write("Standby is still set. No temperature for you!\r\n");
-                }
-                else uart.write("Data is not ready.\r\n");
-            }
-            else uart.write("Unable to connect to temperature sensor.\r\n");
-            Sleep(DELAY_BETWEEN_I2C);
-            timestamp += DELAY_BETWEEN_I2C;
+    	//Sleep between i2c transfers.
+    	Sleep(DELAY_BETWEEN_I2C);
+    	timestamp += DELAY_BETWEEN_I2C;
+        //Remove standby if it is present.
+        if(i2c_temp.read(reg_control, &read, 1) && (read & standby_bit)) {
+            uint8_t normal_bit = 0x00;
+            if(!i2c_temp.write(reg_control, &normal_bit, 1)) uart.write("Unable to connect to temperature sensor. Standby wasn't removed.\r\n");
+            //else uart.write("Stanby mode off.\r\n");
         }
-        
-        if((standby_timer >= STANDBY_TIMEOUT) && i2c_temp.read(reg_control, &read, 1) && !(read & standby_bit)) {
-            uint8_t standby = 0x80;
-            if(!i2c_temp.write(reg_control, &standby, 1)) uart.write("Unable to connect to temperature sensor. Standby wasn't set.\r\n");
-            else uart.write("Stanby mode on.\r\n");
-        }
-        //Sleep between button reads.
+        //Sleep between i2c transfers.
         Sleep(DELAY_BETWEEN_I2C);
         timestamp += DELAY_BETWEEN_I2C;
-        //Stanby timeout handling.
-        standby_timer += DELAY_BETWEEN_I2C;
+        //Try to read temperature.
+        if(i2c_temp.read(reg_control, &read, 1)) {
+            if((read & ready_bit) && !(read & standby_bit)) { // if data_ready bit is set to 1.
+                char msg[128];
+                //Carefully seperate i2c transfers.
+                Sleep(DELAY_BETWEEN_I2C);
+                timestamp += DELAY_BETWEEN_I2C;
+                if(i2c_temp.read(reg_temp, &read, 1)) {                        
+                    //JSON
+                    sample++;
+                    snprintf(msg, 128, "{\r\n\t\"samplenr\": %d,\r\n\t\"timestamp\": %llu,\r\n\t\"temperature\": %d\r\n}\r\n", sample, timestamp, (int8_t)read);
+                    uart.write(msg);
+                }
+                else uart.write("Unable to connect to temperature sensor.\r\n");
+            }
+            else if(read & standby_bit) {
+                uart.write("Standby is still set. No temperature for you!\r\n");
+            }
+            else uart.write("Data is not ready.\r\n");
+        }
+        else uart.write("Unable to connect to temperature sensor.\r\n");
     }
     return 0 ;
 }
