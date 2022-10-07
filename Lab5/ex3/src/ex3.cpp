@@ -19,8 +19,6 @@
 #include <cr_section_macros.h>
 #include "DigitalIoPin.h"
 #include "LpcUart.h"
-#include "Imutex.h"
-#include <mutex>
 #include <atomic>
 
 static volatile std::atomic_int counter;
@@ -88,7 +86,7 @@ int main(void) {
 	Chip_PININT_Init(LPC_GPIO_PIN_INT);
 
     //Buttons init.
-    DigitalIoPin sw1(0, 17 ,true ,true, false);
+    DigitalIoPin sw1(0, 17 ,true ,true, true);
 
     /* Enable PININT clock */
 	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_PININT);
@@ -108,31 +106,17 @@ int main(void) {
 	NVIC_ClearPendingIRQ(PIN_INT0_IRQn);
 	NVIC_EnableIRQ(PIN_INT0_IRQn);
 
-    Imutex guard;
     unsigned int prev_presses = but_presses;
     unsigned int cur_presses = but_presses;
-    unsigned int i = 0;
-    Sleep(1); 
     while(1) {
-        Sleep(1000);
-        //1. Button pressed in the last moments of sleep.
-        guard.lock();
-        Board_LED_Set(1, true);
+        Sleep(100);
         cur_presses = but_presses;
-        //2. Button bounced, causing an interrupt.
         if(prev_presses != cur_presses) {
             prev_presses = cur_presses;
             char buf[36];
             snprintf(buf, 36, "Button was pressed: %d times\r\n", cur_presses);
             uart.write(buf);
         }
-        i = 0;
-        while(i < 7200000) i++;
-        //3. Button can bounce even here.
-        Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(0));
-        NVIC_ClearPendingIRQ(PIN_INT0_IRQn);
-        guard.unlock();
-        Board_LED_Set(1, false);
     }
     return 0 ;
 }
