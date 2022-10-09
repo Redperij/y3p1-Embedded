@@ -108,20 +108,14 @@ int main(void) {
 
     unsigned int prev_presses = but_presses;
     unsigned int cur_presses = but_presses;
-    /*
-    1, 2 and 3 show the reason, why sometimes uart prints additional line in the console even without button press.
-    But mitigation of that error contradicts the requirements, so it is not handled here.
-    */
     while(1) {
-        //3. Button can bounce even here, in the start of this sleep.
         Sleep(100);
-        //1. Button pressed in the last moments of sleep.
+        //Read global variable.
         cur_presses = but_presses;
-        //2. Button bounced, causing an interrupt.
         if(prev_presses != cur_presses) {
-            prev_presses = cur_presses;
             char buf[36];
-            snprintf(buf, 36, "Button was pressed: %d times\r\n", cur_presses);
+            snprintf(buf, 36, "Button was pressed: %d times\r\n", cur_presses - prev_presses);
+            prev_presses = cur_presses;
             uart.write(buf);
         }
     }
