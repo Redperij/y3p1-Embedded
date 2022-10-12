@@ -1,13 +1,3 @@
-/*
-===============================================================================
- Name        : main.c
- Author      : $(author)
- Version     :
- Copyright   : $(copyright)
- Description : main definition
-===============================================================================
-*/
-
 #define S_TO_MS(n)  (n * 1000) //Seconds to milliseconds
 #define BACK_TIME_MS S_TO_MS(10) //Determines timeout for "back" button push.
 
