@@ -8,7 +8,7 @@
 #include "IntegerEdit.h"
 #include <cstdio>
 
-IntegerEdit::IntegerEdit(LiquidCrystal *lcd_, LpcUart *duart_, std::string editTitle, int16_t lbound, int16_t ubound): lcd(lcd_), duart(duart_), title(editTitle), lbound(lbound), ubound(ubound) {
+IntegerEdit::IntegerEdit(LiquidCrystal *lcd_, LpcUart *duart_, std::string editTitle, int16_t lbound, int16_t ubound, uint16_t step): lcd(lcd_), duart(duart_), title(editTitle), lbound(lbound), ubound(ubound), step(step) {
 	value = 0;
 	edit = 0;
 	focus = false;
@@ -17,11 +17,13 @@ IntegerEdit::IntegerEdit(LiquidCrystal *lcd_, LpcUart *duart_, std::string editT
 IntegerEdit::~IntegerEdit() {}
 
 void IntegerEdit::increment() {
-	if(this->edit < this->ubound) this->edit++;
+	if(this->edit + this->step <= this->ubound) this->edit += this->step;
+	else this->edit = this->ubound;
 }
 
 void IntegerEdit::decrement() {
-	if(this->edit > this->lbound) this->edit--;
+	if(this->edit - this->step >= this->lbound) this->edit -= this->step;
+	else this->edit = this->lbound;
 }
 
 void IntegerEdit::accept() {
@@ -69,6 +71,10 @@ void IntegerEdit::save() {
 
 int IntegerEdit::getValue() {
 	return this->value;
+}
+
+int IntegerEdit::getStep() {
+	return this->step;
 }
 
 void IntegerEdit::setValue(int value) {

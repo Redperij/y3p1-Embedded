@@ -14,6 +14,7 @@
 #include "DigitalIoPin.h"
 #include "SimpleMenu.h"
 #include "IntegerEdit.h"
+#include "DecimalEdit.h"
 #include "LpcUart.h"
 #include <atomic>
 
@@ -73,6 +74,14 @@ int main(void) {
     DigitalIoPin sw2(1, 11, true, true, true);
     DigitalIoPin sw3(1, 9, true, true, true);
 
+    //Leds init.
+    DigitalIoPin rled(0, 25, false, true, true);
+    DigitalIoPin gled(0, 3, false, true, true);
+    DigitalIoPin bled(1, 1, false, true, true);
+    rled.write(false);
+    gled.write(false);
+    bled.write(false);
+
     //LCD pins init.
     DigitalIoPin rs(0, 8, false, true, false);
     DigitalIoPin en(1, 6, false, true, false);
@@ -94,14 +103,14 @@ int main(void) {
 
     //Menu
     SimpleMenu menu(uart);
-    IntegerEdit *time = new IntegerEdit(lcd, uart, std::string("Time"), 0, 10);
-    IntegerEdit *blank = new IntegerEdit(lcd, uart, std::string("Blank"), 100, 200);
-    IntegerEdit *light = new IntegerEdit(lcd, uart, std::string("Light"), 0, 2);
+    DecimalEdit *time = new DecimalEdit(lcd, uart, std::string("Time"), 0, 200, 20);
+    DecimalEdit *blank = new DecimalEdit(lcd, uart, std::string("Blank"), 0, 1, 0.1);
+    IntegerEdit *light = new IntegerEdit(lcd, uart, std::string("Light"), 0, 3, 1);
     menu.addItem(new MenuItem(time));
     menu.addItem(new MenuItem(blank));
     menu.addItem(new MenuItem(light));
-    time->setValue(5);
-    blank->setValue(121);
+    time->setValue(200);
+    blank->setValue(0.5);
     light->setValue(0);
 
     menu.event(MenuItem::show); //Display first menu item
@@ -110,9 +119,15 @@ int main(void) {
     bool sw2_pressed = false; //"down" button flag.
     bool sw3_pressed = false; //"up" button flag.
     unsigned int timeout = 0; //Timeout for "back" call.
+    float led_timeout = 0;
+    bool led_on = false;
     while(1) {
         Sleep(1);
+        //Led timeout
+        led_timeout++;
+        //Timeout for "back"
         timeout++;
+        //Buttons
         if(sw1.read()) {
             sw1_pressed = true;
         }
@@ -137,6 +152,73 @@ int main(void) {
             sw3_pressed = false;
             menu.event(MenuItem::up);
         }
+        
+        //Leds (TODO: Make a state machine out of it, or make it a separate class)
+        switch (light->getValue())
+        {
+        case 1:
+            gled.write(false);
+            bled.write(false);
+            if(led_on) {
+                if(led_timeout >= time->getValue()) {
+                    led_on = false;
+                    rled.write(false);
+                    led_timeout = 0;
+                }
+            }
+            else {
+                if((led_timeout >= blank->getValue() * 1000) && time->getValue() > 0) {
+                    led_on = true;
+                    rled.write(true);
+                    led_timeout = 0;
+                }
+            }
+            break;
+        case 2:
+            rled.write(false);
+            bled.write(false);
+            if(led_on) {
+                if(led_timeout >= time->getValue()) {
+                    led_on = false;
+                    gled.write(false);
+                    led_timeout = 0;
+                }
+            }
+            else {
+                if((led_timeout >= blank->getValue() * 1000) && time->getValue() > 0) {
+                    led_on = true;
+                    gled.write(true);
+                    led_timeout = 0;
+                }
+            }
+            break;
+        case 3:
+            rled.write(false);
+            gled.write(false);
+            if(led_on) {
+                if(led_timeout >= time->getValue()) {
+                    led_on = false;
+                    bled.write(false);
+                    led_timeout = 0;
+                }
+            }
+            else {
+                if((led_timeout >= blank->getValue() * 1000) && time->getValue() > 0) {
+                    led_on = true;
+                    bled.write(true);
+                    led_timeout = 0;
+                }
+            }
+            break;
+        default:
+            rled.write(false);
+            gled.write(false);
+            bled.write(false);
+            led_timeout = 0;
+            led_on = false;
+            break;
+        }
+
         //"back" is called every 10 seconds
         if(timeout >= BACK_TIME_MS) {
             timeout = 0;
