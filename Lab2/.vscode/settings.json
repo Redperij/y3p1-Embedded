@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.ejs": "html",
-        "cstdint": "cpp",
-        "exception": "cpp",
-        "string": "cpp",
-        "xstring": "cpp"
-    }
-}

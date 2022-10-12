@@ -39,3 +39,4 @@
 #Exclude Debug folder.
 */Debug
 */.mcuxpressoide_packages_support/info.properties
+*/.vscode
