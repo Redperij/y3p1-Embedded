@@ -14,6 +14,8 @@
 #include "DigitalIoPin.h"
 #include "SimpleMenu.h"
 #include "IntegerEdit.h"
+#include "KillerEdit.h"
+#include "SleepEdit.h"
 #include "LpcUart.h"
 #include <atomic>
 
@@ -96,8 +98,8 @@ int main(void) {
     //Menu
     SimpleMenu menu(uart);
     IntegerEdit *time = new IntegerEdit(lcd, uart, std::string("Time"), 0, 10);
-    IntegerEdit *blank = new IntegerEdit(lcd, uart, std::string("Blank"), 100, 200);
-    IntegerEdit *light = new IntegerEdit(lcd, uart, std::string("Light"), 0, 2);
+    KillerEdit *blank = new KillerEdit(lcd, uart, std::string("Blank"), 100, 200); //Generates invalid feed sequence upon accept()
+    SleepEdit *light = new SleepEdit(lcd, uart, std::string("Light"), 0, 2); //Sleeps for 10 seconds upon accept()
     menu.addItem(new MenuItem(time));
     menu.addItem(new MenuItem(blank));
     menu.addItem(new MenuItem(light));
@@ -105,33 +107,30 @@ int main(void) {
     blank->setValue(121);
     light->setValue(0);
 
-    uart->write("Started!\r\n");
+    uart->write("\r\n---------------\r\nStarted!\r\n");
     menu.event(MenuItem::show); //Display first menu item
 
-    uint32_t wdtStatus = Chip_WWDT_GetStatus(LPC_WWDT);
-    if (wdtStatus & WWDT_WDMOD_WDTOF) {
+    //Checking watchdog reset
+    if (Chip_WWDT_GetStatus(LPC_WWDT) & WWDT_WDMOD_WDTOF) {
         uart->write("There was watchdog timeout.\r\n");
+        Board_LED_Set(0, true);
     }
     else {
         uart->write("Simple reset\r\n");
+        Board_LED_Set(1, true);
     }
 
     //Watchdog timer
-    uint32_t wdtFreq;
     /* Enable the WDT oscillator */
 	Chip_SYSCTL_PowerUp(SYSCTL_POWERDOWN_WDTOSC_PD);
 
-    /* The WDT divides the input frequency into it by 4 */
-	wdtFreq = Chip_Clock_GetWDTOSCRate() / 4;
-
     /* Initialize WWDT (also enables WWDT clock) */
 	Chip_WWDT_Init(LPC_WWDT);
-    /* Set watchdog feed time constant to approximately 2s
-	   Set watchdog warning time to 512 ticks after feed time constant
-	   Set watchdog window time to 3s */
-	Chip_WWDT_SetTimeOut(LPC_WWDT, wdtFreq * 2);
-	//Chip_WWDT_SetWarning(LPC_WWDT, 512);
-	Chip_WWDT_SetWindow(LPC_WWDT, wdtFreq * 3);
+
+    //Set watchdog feed time constant to approximately 60ms. (6 * 10)
+    //Worst case delay is considered to be 6ms, due to the main loop Sleep(1) and several delays in LCD
+    //(excluding delay from initialisation, since it is done before watchdog setup)
+    Chip_WWDT_SetTimeOut(LPC_WWDT, (Chip_Clock_GetWDTOSCRate() / 4 / 1000) * 60);
 
     /* Configure WWDT to reset on timeout */
 	Chip_WWDT_SetOption(LPC_WWDT, WWDT_WDMOD_WDRESET);
@@ -148,7 +147,7 @@ int main(void) {
     bool sw3_pressed = false; //"up" button flag.
     unsigned int timeout = 0; //Timeout for "back" call.
     while(1) {
-        Chip_WWDT_Feed(LPC_WWDT);
+        Chip_WWDT_Feed(LPC_WWDT); //Feed watchdog every loop.
         Sleep(1);
         timeout++;
         if(sw1.read()) {
